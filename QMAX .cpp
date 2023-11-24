@@ -1,64 +1,99 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <climits>
 
 using namespace std;
 
-typedef long long ll;
-typedef pair<int,int> ii;
-typedef unsigned long long ull;
+class Query {
+private:
+    int u, v;
 
-#define X first
-#define Y second
-#define pb push_back
-#define mp make_pair
-#define ep emplace_back
-#define EL printf("\n")
-#define sz(A) (int) A.size()
-#define FOR(i,l,r) for (int i=l;i<=r;i++)
-#define FOD(i,r,l) for (int i=r;i>=l;i--)
-#define fillchar(a,x) memset(a, x, sizeof (a))
-#define faster ios_base::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL);
+public:
+    Query(int uu, int vv) : u(uu), v(vv) {}
 
+    int getU() const {
+        return u;
+    }
 
-const int N = 50005;
-int n, q, a[N], t[N<<2];
+    int getV() const {
+        return v;
+    }
+};
 
-void build(int k, int l, int r) {
-	if (l == r) {
-		t[k] = a[l]; return;
-	}
-	int m = (l+r)>>1;
-	build(k<<1, l, m);
-	build(k*2+1, m+1, r);
-	t[k] = max(t[k<<1], t[k*2+1]);
-}
+class Update {
+private:
+    int u, v, k;
 
-int findMax(int k, int l, int r, int L, int R) {
-	if (r < L || R < l) return 0;
-	if (L <= l && r <= R) return t[k];
-	int m = (l+r)>>1;
-	return max(findMax(k<<1, l, m, L, R), findMax(k*2+1, m+1, r, L, R));
-}
+public:
+    Update(int uu, int vv, int kk) : u(uu), v(vv), k(kk) {}
+
+    int getU() const {
+        return u;
+    }
+
+    int getV() const {
+        return v;
+    }
+
+    int getK() const {
+        return k;
+    }
+};
+
+class ArrayUpdater {
+private:
+    vector<int> arr;
+
+public:
+    ArrayUpdater(int n) : arr(n, 0) {}
+
+    void applyUpdate(const Update& update) {
+        arr[update.getU() - 1] += update.getK();
+        if (update.getV() < arr.size()) {
+            arr[update.getV()] -= update.getK();
+        }
+    }
+
+    void calculatePrefixSum() {
+        for (int i = 1; i < arr.size(); ++i) {
+            arr[i] += arr[i - 1];
+        }
+    }
+
+    int getMaxValueInRange(int u, int v) const {
+        int maxVal = INT_MIN;
+        for (int i = u - 1; i < v; ++i) {
+            maxVal = max(maxVal, arr[i]);
+        }
+        return maxVal;
+    }
+};
 
 int main() {
-//	freopen("INP.TXT", "r", stdin);
-//  freopen("OUT.TXT", "w", stdout);
+    int n, m;
+    cin >> n >> m;
 
-	cin >> n >> q;
-	while (q--) {
-		int l, r, k;
-		scanf("%d%d%d", &l, &r, &k);
-		a[l] += k;
-		a[r+1] -= k;
-	}
-	FOR(i,2,n) a[i] += a[i-1];
+    ArrayUpdater arrayUpdater(n);
 
-	build(1,1,n);
-	cin >> q;
-	while (q--) {
-		int l, r;
-		scanf("%d%d", &l, &r);
-		printf("%d\n", findMax(1,1,n,l,r));
-	}
+    for (int i = 0; i < m; ++i) {
+        int u, v, k;
+        cin >> u >> v >> k;
+        Update update(u, v, k);
+        arrayUpdater.applyUpdate(update);
+    }
 
-	return 0;
+    arrayUpdater.calculatePrefixSum();
+
+    int p;
+    cin >> p;
+
+    for (int i = 0; i < p; ++i) {
+        int u, v;
+        cin >> u >> v;
+        Query query(u, v);
+        cout << arrayUpdater.getMaxValueInRange(query.getU(), query.getV()) << endl;
+    }
+
+    return 0;
 }
