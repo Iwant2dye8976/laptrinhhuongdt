@@ -74,6 +74,7 @@ BacSi::BacSi(Nguoi a){
 	Sdt = a.getSdt();
 	Diachi = a.getDiachi();
 	SoNgayLam = TienCong = 0;
+	MaBS = "";
 }
 
 void BacSi::NhapBS(){
@@ -201,7 +202,7 @@ int sosanhNgayLamViec(vector<BacSi> &dsBS){
 int main(){
 	int slNguoi;
 	cout<<"Nhap so luong nguoi: ", cin>>slNguoi;
-	
+
 	//Kiem tra dieu kien 0 < slNguoi <= 100
 	while(slNguoi<=0 || slNguoi>100){
 		cout<<"\nSo luong khong hop le!"<<endl;
@@ -210,6 +211,8 @@ int main(){
 	vector<BacSi> dsBacSi;
 	vector<BenhNhan> dsBenhNhan;
 	vector<Nguoi> dsNguoi;
+	int thutubacsi = 1;
+	int thutubenhnhan = 1;
 	for(int i=0;i<slNguoi;i++){
 		int loai;
 		cout<<"\nHay chon vai tro. Nhap 1-Bac Si||2-Benh Nhan: ";
@@ -223,17 +226,15 @@ int main(){
 			if(loai>0 && loai<3){
 				Nguoi a;
 				if(loai == 1){
-					int thutubacsi = 1;
 					cout<<"Nhap thong tin cho bac si thu "<<thutubacsi<<": \n";
 					a.NhapNguoi();
-					BacSi bs(a);
+					BacSi bs(a); //Khoi tao bac si voi thong tin tu Nguoi
 					bs.NhapBS();
 					dsBacSi.push_back(bs);
 					dsNguoi.push_back(a);
 					thutubacsi++;
 				}
 				else{
-					int thutubenhnhan = 1;
 					cout<<"Nhap thong tin cho benh nhan thu "<<thutubenhnhan<<": \n";
 					a.NhapNguoi();
 					BenhNhan bn(a);
