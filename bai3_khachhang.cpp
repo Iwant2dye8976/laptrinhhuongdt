@@ -5,7 +5,7 @@ using namespace std;
 class KhachHang{
 	private:
 		string HoTen,DiaChi,Sdt,loaiKH;
-		int maKH;
+		int maKH,total;
 		static int maKHt;
 	public:
 		KhachHang();
@@ -14,6 +14,8 @@ class KhachHang{
 		int getmaKH();
 		string getDiaChi();
 		string getHoTen();
+		void setTotal(int);
+		int getTotal();
 };
 
 //Khoi tao ma khach hang
@@ -42,6 +44,12 @@ void KhachHang::InKH() const{
 int KhachHang::getmaKH(){return maKH;};
 string KhachHang::getDiaChi(){return DiaChi;};
 string KhachHang::getHoTen(){return HoTen;};
+void KhachHang::setTotal(int a){
+	total = a;
+}
+int KhachHang::getTotal(){
+	return total;
+}
 
 class MatHang{
 	private:
@@ -92,10 +100,14 @@ class BangMuaHang{
 	private:
 		KhachHang khach;
 		MatHang hang;
+		int total;
 	public:
 		void muaHang(KhachHang a, MatHang b);
 		void inBangMuaHang();
 		KhachHang getDataKH();
+		MatHang getDataHang();
+		void inDSmua();
+		void inHoaDon();
 };
 
 void BangMuaHang::muaHang(KhachHang a, MatHang b){
@@ -108,9 +120,27 @@ void BangMuaHang::inBangMuaHang(){
 	cout<<setw(30)<<left<<hang.getnhomHang()<<setw(30)<<left<<hang.getgiaHang()<<endl;
 }
 
+void BangMuaHang::inDSmua(){
+	cout<<setw(24)<<left<<khach.getHoTen()<<setw(24)<<left<<khach.getmaKH();
+	cout<<setw(24)<<left<<hang.gettenHang();
+	cout<<setw(24)<<left<<hang.getnhomHang()<<setw(24)<<left<<hang.getgiaHang()<<endl;
+}
+
+void BangMuaHang::inHoaDon(){
+	cout<<setw(40)<<left<<khach.getHoTen()<<setw(40)<<left<<khach.getmaKH();
+	cout<<setw(40)<<left<<khach.getTotal()<<endl;
+}
+
+
+
 KhachHang BangMuaHang::getDataKH(){
 	return khach;
 }
+
+MatHang BangMuaHang::getDataHang(){
+	return hang;
+}
+
 
 static void InKhachHang(){
 	cout<<setfill('-');
@@ -145,20 +175,57 @@ static void InMatHang(){
 	cout<<setfill(' ');
 }
 
-static void InBangMuaHang(){
+static void InDSmuaH(){
 	cout<<setfill('-');
 	cout<<setw(120)<<'-'<<endl;
 	cout<<setfill(' ');
-	cout<<setw(65)<<right<<"DANH SACH MAT HANG"<<endl;
+	cout<<setw(65)<<right<<"DANH SACH MUA HANG"<<endl;
 	cout<<setfill('-');
 	cout<<setw(120)<<'-'<<endl;
 	cout<<setfill(' ');
-	cout<<setw(30)<<left<<"Ma San Pham"<<setw(30)<<left<<"Ten San Pham";
-	cout<<setw(30)<< left<<"Nhom San Pham"<<setw(30)<<left<<"Gia Ban";
+	cout<<setw(24)<<left<<"Ho ten"<<setw(24)<<left<<"Ma KH";
+	cout<<setw(24)<< left<<"Ten Hang"<<setw(24)<<left<<"Nhom Hang";
+	cout<<setw(24)<<left<<"Gia";
 	cout<<endl;
 	cout<<setfill('-');
 	cout<<setw(120)<<'-'<<endl;
 	cout<<setfill(' ');
+}
+
+static void InHoaDon(){
+	cout<<setfill('-');
+	cout<<setw(120)<<'-'<<endl;
+	cout<<setfill(' ');
+	cout<<setw(65)<<right<<"HOA DON"<<endl;
+	cout<<setfill('-');
+	cout<<setw(120)<<'-'<<endl;
+	cout<<setfill(' ');
+	cout<<setw(40)<<left<<"Ho ten"<<setw(40)<<left<<"Ma KH";
+	cout<<setw(40)<<left<<"Thanh Tien";
+	cout<<endl;
+	cout<<setfill('-');
+	cout<<setw(120)<<'-'<<endl;
+	cout<<setfill(' ');
+}
+
+bool SapxepHoten(BangMuaHang a, BangMuaHang b){
+	return a.getDataKH().getHoTen()<b.getDataKH().getHoTen();
+}
+
+bool SapxepHang(BangMuaHang a, BangMuaHang b){
+	return a.getDataHang().gettenHang()<b.getDataHang().gettenHang();
+}
+
+int tong(vector<KhachHang> a, vector<BangMuaHang> b, int slKH){
+	for(int i=0;i<slKH;i++){
+		int sum=0;
+		for(auto &kh : BMH){
+			if(kh.getDataKH().getmaKH()==DSKH[i].getmaKH()){
+				sum+=kh.getDataHang().getgiaHang();
+			}
+		}
+		return sum;
+	}
 }
 
 int main(){
@@ -194,25 +261,32 @@ int main(){
 	
 	vector<BangMuaHang> BMH;
 	for(int i=0;i<slKH;i++){
-		cout<<"\nMua hang cho khach hang "<<DSKH[i].getHoTen()<<endl;
+		cout<<"\nMua hang cho khach hang '"<<DSKH[i].getHoTen()<<"'"<<endl;
 		string loaisp;
 		cout<<"Nhap loai san pham can mua(thoi trang, tieu dung, dien may, gia dung): ";
 		getline(cin, loaisp);
 		cout<<"Danh sach san pham "<<loaisp<<": "<<endl;
 		vector<MatHang> DSmh;
+		int stt = 1;
 		for(int k=0;k<slSP;k++){
 			if(DSH[k].getnhomHang()==loaisp){
-				cout<<k+1<<". Ma sp: "<<DSH[k].getmaHang()<<", ";
+				cout<<stt<<". Ma sp: "<<DSH[k].getmaHang()<<", ";
 				cout<<DSH[k].gettenHang()<<", nhom hang: "<<DSH[k].getnhomHang();
 				cout<<", gia: "<<DSH[k].getgiaHang()<<endl;
 				DSmh.push_back(DSH[k]);
+				stt++;
 			}
 		}
 		int slcanmua;
 		cout<<"Nhap so luong mat hang can mua(khong qua 10): ", cin>>slcanmua;
+		while(slcanmua<=0 || slcanmua>10){
+			cout<<"\nSo luong khong hop le!\n";
+			cout<<"Vui long nhap lai: ";
+			cin>>slcanmua;
+		}
 		while(slcanmua>0 && slcanmua<=10){
 			int mahangt;
-			cout<<"Nhap ma hang can mua: ", cin>>mahangt;
+			cout<<"Nhap ma san pham can mua: ", cin>>mahangt;
 			cin.ignore();
 			for(int j=0;j<DSmh.size();j++){
 				if(DSmh[j].getmaHang()==mahangt){
@@ -225,17 +299,49 @@ int main(){
 		}
 		DSmh.clear();
 	}
-	
+	system("cls");
+	//In DS mua hang
 	if(!BMH.empty()){
-		for(int l=0;l<slKH;l++){
-			cout<<"\nIn bang cho khach hang "<<DSKH[l].getHoTen()<<": "<<endl;
-			InBangMuaHang();
-			for(int i=0;i<BMH.size();i++){
-				if(BMH[i].getDataKH().getmaKH()==DSKH[l].getmaKH()){
-					BMH[i].inBangMuaHang();
-				}
+		cout<<"Danh sach mua hang\n";
+		InDSmuaH();
+		for(auto &kh : BMH){
+				kh.inDSmua();
 			}
-		}
+		system("pause");
+		system("cls");
 	}
+	//Sap xep theo ten khach hang
+	if(!BMH.empty()){
+		cout<<"DS mua hang sap xep theo ten khach hang\n\n";
+		sort(BMH.begin(), BMH.end(), SapxepHoten);
+		InDSmuaH();
+		for(auto &kh : BMH){
+				kh.inDSmua();
+			}
+		system("pause");
+		system("cls");
+	}
+	//Sap xep theo ten hang
+	if(!BMH.empty()){
+		cout<<"DS mua hang sap xep theo ten hang\n\n";
+		sort(BMH.begin(), BMH.end(), SapxepHang);
+		InDSmuaH();
+		for(auto &kh : BMH){
+				kh.inDSmua();
+			}
+		system("pause");
+		system("cls");
+	}
+	
+	//In hoa don
+	cout<<"DS Hoa Don\n";
+	
+	InHoaDon();
+	for(auto &kh : BMH){
+		kh.inHoaDon();
+	}
+	system("pause");
+	system("cls");
+		
 	return 0;
 }
