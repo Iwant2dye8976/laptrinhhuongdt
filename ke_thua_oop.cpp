@@ -9,7 +9,7 @@ class Nguoi{
 	public:
 		Nguoi();
 		void NhapNguoi();
-		void InNguoi();
+		void InNguoi(int);
 		string getHoten();
 		string getSdt();
 		string getDiachi();
@@ -30,9 +30,9 @@ void Nguoi::NhapNguoi(){
 	cout<<"Dia chi: ", getline(cin,Diachi);
 }
 
-void Nguoi::InNguoi(){
-	cout<<setw(37)<<left<<Hoten<<setw(37)<<left<<tuoi;
-	cout<<setw(37)<<left<<Sdt<<setw(37)<<left<<Diachi;
+void Nguoi::InNguoi(int width){
+	cout<<setw(width)<<left<<Hoten<<setw(width)<<left<<tuoi;
+	cout<<setw(width)<<left<<Sdt<<setw(width)<<left<<Diachi;
 }
 
 string Nguoi::getHoten(){
@@ -56,28 +56,15 @@ class BacSi : public Nguoi{
 	private:
 		string MaBS;
 		int SoNgayLam,TienCong;
-		Nguoi a;
 	public:
-		BacSi(Nguoi a);
 		void NhapBS();
-		void InBS();
+		void InBS(int);
 		int TienCongThang();
 		int getSoNgayLam();
 };
 
-
-//Khoi tao BacSi
-
-BacSi::BacSi(Nguoi a){
-	Hoten = a.getHoten();
-	tuoi = a.getTuoi();
-	Sdt = a.getSdt();
-	Diachi = a.getDiachi();
-	SoNgayLam = TienCong = 0;
-	MaBS = "";
-}
-
 void BacSi::NhapBS(){
+	Nguoi : NhapNguoi(); 
 	cout<<"Ma bac si: ", getline(cin,MaBS);
 	cout<<"So ngay lam viec: ", cin>>SoNgayLam;
 	cout<<"Tien cong: ", cin>>TienCong;
@@ -85,11 +72,10 @@ void BacSi::NhapBS(){
 }
 
 //In Bac si
-void BacSi::InBS(){
-	cout<<setw(18)<<left<<Hoten<<setw(18)<<left<<tuoi;
-	cout<<setw(18)<<left<<Sdt<<setw(18)<<left<<Diachi;
-	cout<<setw(18)<<left<<MaBS<<setw(18)<<left<<SoNgayLam;
-	cout<<setw(18)<<left<<TienCong<<setw(18)<<left<<TienCongThang()<<endl;
+void BacSi::InBS(int width){
+	Nguoi : InNguoi(width);
+	cout<<setw(width)<<left<<MaBS<<setw(width)<<left<<SoNgayLam;
+	cout<<setw(width)<<left<<TienCong<<setw(width)<<left<<TienCongThang()<<endl;
 }
 
 //Tra ve tien cong = son gay lam * tien cong/ngay
@@ -105,36 +91,25 @@ int BacSi::getSoNgayLam(){
 class BenhNhan : public Nguoi{
 	private:
 		string MaBN;
-		Nguoi a;
 	public:
-		BenhNhan(Nguoi a);
 		void NhapBN();
-		void InBN();
+		void InBN(int);
 		int getTuoiBN();
 };
 
-BenhNhan::BenhNhan(Nguoi a){
-	Hoten = a.getHoten();
-	tuoi = a.getTuoi();
-	Sdt = a.getSdt();
-	Diachi = a.getDiachi();
-	MaBN = "";
-}
-
 void BenhNhan::NhapBN(){
+	Nguoi : NhapNguoi();
 	cout<<"Ma benh nhan: ", getline(cin,MaBN);
 }
 
-void BenhNhan::InBN(){
-	cout<<setw(29)<<left<<Hoten<<setw(29)<<left<<tuoi;
-	cout<<setw(29)<<left<<Sdt<<setw(29)<<left<<Diachi;
-	cout<<setw(29)<<left<<MaBN<<endl;
+void BenhNhan::InBN(int width){
+	Nguoi : InNguoi(width);
+	cout<<setw(width)<<left<<MaBN<<endl;
 }
 
 int BenhNhan::getTuoiBN(){
 	return tuoi;
 }
-
 
 //Cac ham in bang
 
@@ -211,8 +186,7 @@ int main(){
 	vector<BacSi> dsBacSi;
 	vector<BenhNhan> dsBenhNhan;
 	vector<Nguoi> dsNguoi;
-	int thutubacsi = 1;
-	int thutubenhnhan = 1;
+	int n=0,m=0;
 	for(int i=0;i<slNguoi;i++){
 		int loai;
 		cout<<"\nHay chon vai tro. Nhap 1-Bac Si||2-Benh Nhan: ";
@@ -224,23 +198,20 @@ int main(){
 			cin.ignore();
 		}
 			if(loai>0 && loai<3){
-				Nguoi a;
+				static int thutubacsi = 1;
+				static int thutubenhnhan = 1;
 				if(loai == 1){
+					BacSi bs;
 					cout<<"Nhap thong tin cho bac si thu "<<thutubacsi<<": \n";
-					a.NhapNguoi();
-					BacSi bs(a); //Khoi tao bac si voi thong tin tu Nguoi
 					bs.NhapBS();
 					dsBacSi.push_back(bs);
-					dsNguoi.push_back(a);
 					thutubacsi++;
 				}
 				else{
+					BenhNhan bn;
 					cout<<"Nhap thong tin cho benh nhan thu "<<thutubenhnhan<<": \n";
-					a.NhapNguoi();
-					BenhNhan bn(a);
 					bn.NhapBN();
 					dsBenhNhan.push_back(bn);
-					dsNguoi.push_back(a);
 					thutubenhnhan++;
 				}
 			}
@@ -250,7 +221,7 @@ int main(){
 		cout<<"Danh sach Nguoi da nhap thong tin.\n\n";
 		InBangNguoi();
 		for(auto &nguoi : dsNguoi){
-			nguoi.InNguoi();
+			nguoi.InNguoi(37);
 		}
 		system("pause");
 		system("cls");
@@ -262,7 +233,7 @@ int main(){
 		InBangBacSi();
 		for(auto &bs : dsBacSi){
 			if(bs.getSoNgayLam()==max){
-				bs.InBS();
+				bs.InBS(18);
 			}
 		}
 		system("pause");
@@ -282,7 +253,7 @@ int main(){
 			InBangBenhNhan();
 			for(auto &bn : dsBenhNhan){
 				if(bn.getTuoiBN()<=10){
-					bn.InBN();
+					bn.InBN(29);
 				}
 			}
 		system("pause");
@@ -292,6 +263,5 @@ int main(){
 			cout<<"Khong co benh nhan nao <= 10 tuoi!";
 		}
 	}
-	
 	return 0;
 }
