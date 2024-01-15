@@ -136,7 +136,7 @@ static void ThanhTien(){
 	cout << setfill('-');
 	cout << setw(120) << '-' << endl;
 	cout << setfill(' ');
-	cout << setw(65) << right << "DANH SACH KHACH HANG" << endl;
+	cout << setw(65) << left << "DANH SACH KHACH HANG" << endl;
 	cout << setfill('-');
 	cout << setw(120) << '-' << endl;
 	cout << setfill(' ');
@@ -173,7 +173,7 @@ int main(){
 		InBangKH();
 		for(auto &kh : DSKH){
 			kh.InKH(24);
-				cout<<"\n";
+			cout<<"\n";
 		}
 	}
 	system("pause");
@@ -218,7 +218,7 @@ int main(){
 						cout<<"Moi khach hang khong su dung qua 3 dich vu!\n";
 						cout<<"Nhap so luong su dung dich vu "<<DSDV[k].getMoTa()<<": ";
 						cin>>n;
-					}while(soluong-n<0);
+					}while(soluong-n<0||n<0);
 					hd.NhapHD(DSKH[j],DSDV[k],n);
 					DSHD.push_back(hd);
 					soluong-=n;
